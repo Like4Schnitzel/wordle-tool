@@ -1,6 +1,7 @@
 <script lang="ts">
     import words from '$lib/words.json';
     import type { Character, Color, Letter } from '$lib/types.ts';
+    import { getAllIndexes } from '$lib';
 
     let filteredWords = $state(words);
     const colors: Color[] = ['gray', 'yellow', 'green'];
@@ -78,10 +79,6 @@
                     if (filter.color === 'yellow' && filter.index === word.indexOf(letter)) {
                         return false;
                     }
-
-                    if (filter.color === 'green' && filter.index !== word.indexOf(letter)) {
-                        return false;
-                    }
                 }
             }
 
@@ -91,14 +88,12 @@
                     return false;
                 }
 
-                if (filter.color === 'green' && filter.index !== word.indexOf(filter.letter)) {
+                if (filter.color === 'green' && !getAllIndexes(word, filter.letter).includes(filter.index)) {
                     return false;
                 }
             }
             return true;
         });
-
-        console.log('Filtered words:', filteredWords);
     }
 </script>
 
