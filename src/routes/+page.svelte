@@ -9,7 +9,7 @@
     const word: Character[] = $state((() => {
         const tmp = [];
         for (let i = 0; i < 5; i++) {
-            tmp.push({ letter: null, color: 'gray' });
+            tmp.push({ letter: null, color: 'gray' as Color });
         }
         return tmp;
     })());
