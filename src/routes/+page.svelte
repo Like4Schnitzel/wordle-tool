@@ -9,7 +9,7 @@
     const word: Character[] = $state((() => {
         const tmp = [];
         for (let i = 0; i < 5; i++) {
-            tmp.push({ letter: null, color: null });
+            tmp.push({ letter: null, color: 'gray' });
         }
         return tmp;
     })());
@@ -21,7 +21,7 @@
     function resetCurrentWord() {
         for (const character of word) {
             character.letter = null;
-            character.color = null;
+            character.color = 'gray';
         }
         for (const input of characterInputs) {
             input.value = '';
@@ -51,6 +51,11 @@
         try {
             let enteredLetter = characterInputs[index].value;
             if (enteredLetter === null) return;
+            if (enteredLetter === '') {
+                word[index].letter = null;
+                characterInputs[index].value = '';
+                return;
+            }
 
             enteredLetter = enteredLetter.trim().toUpperCase();
             if (enteredLetter < 'A' || enteredLetter > 'Z') {
@@ -60,6 +65,9 @@
 
             word[index].letter = enteredLetter as Letter;
             characterInputs[index].value = word[index].letter;
+            if (index < word.length - 1) {
+                characterInputs[index + 1].focus();
+            }
         } catch {
             word[index].letter = null;
             characterInputs[index].value = '';
@@ -104,10 +112,11 @@
             {#each word as letter, index}
                 <div>
                     <input type="text" oninput={() => handleInput(index)} bind:this={characterInputs[index]} maxlength="1" autocomplete="off" required />
-                    <select bind:value={word[index].color} required>
-                        {#each colors as color}
-                            <option value={color}>{color}</option>
-                        {/each}
+                    {#each colors as color}
+                        <label class={`color-input ${color}`} for={`color-${index}-${color}`}>
+                            <input type="radio" id={`color-${index}-${color}`} name={`color-${index}`} class={`color-input ${color}`} value={color} bind:group={letter.color} />
+                        </label>
+                    {/each}
                 </div>
             {/each}
         </div>
@@ -178,10 +187,20 @@
         width: 1rem;
         text-align: center;
     }
+    
+    .color-input {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        margin: 0;
+        border-radius: 2px;
+    }
 
-    div select {
-        width: 1.5rem;
-        text-align: center;
+    .color-input:has(:checked) {
+        outline: 0.1rem solid white;
+    }
+
+    input[type="radio"] {
+        display: none;
     }
 
     .words {
